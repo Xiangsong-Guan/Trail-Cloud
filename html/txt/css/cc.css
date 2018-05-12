@@ -45,7 +45,14 @@ a:hover { color: skyblue; text-decoration: none; }
 
 .content:hover {
   opacity: 1;
-  max-height: 220px;
+  max-height: 100px;
+}
+
+@media (max-width: 35em) {
+  .content:hover {
+    opacity: 1;
+    max-height: 220px;
+  }
 }
 
 .text {
