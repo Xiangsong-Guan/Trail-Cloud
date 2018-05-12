@@ -1,10 +1,10 @@
 /* starter */
 body {
-  padding-top: 5rem;
+  padding-top: 12vh;
   background-color: #f8f8f8;
 }
 .about {
-  padding: 3rem 5rem;
+  padding: 3vh 5vw;
   text-align: center;
 }
 a:focus,
@@ -44,6 +44,7 @@ img {
 
 .contact {
   text-align: center;
+  padding-bottom: 3vh;
 }
 
 .contact ul li a {
