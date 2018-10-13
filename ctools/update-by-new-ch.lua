@@ -89,7 +89,7 @@ content =
   "<!%-%- new index %-%->",
   [[<li>
       <p><a href="/story/]] ..
-    ch_code .. '.html">' .. ch_title .. [["</a></p>
+    ch_code .. '.html">' .. ch_title .. [[</a></p>
     </li>
     <!-- new index -->]]
 )
