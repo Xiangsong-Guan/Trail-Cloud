@@ -36,15 +36,7 @@ a:hover { color: skyblue; text-decoration: none; }
 
 .content {
   margin: 0;
-  opacity: 0.0;
-  max-height: 10px;
-  transition-property: max-height, opacity;
-  transition-duration: 1s;
-  transition-timing-function: cubic-bezier(0, 0, 0.1, 1);
-}
-
-.content:hover {
-  opacity: 1;
+  opacity: 0.7;
   max-height: 100px;
 }
 
