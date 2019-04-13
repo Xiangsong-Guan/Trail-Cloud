@@ -5,22 +5,22 @@ local ch_template =
 <html lang="zh">
 
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=GB18030">
-  <meta charset="GB18030">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="º½¼£ÔÆ£¬ÕâÊÇÒ»¸öÕÀ·ÅÓÚÊ¢ÏÄ£¬Àú¾­ÇïÈÕµÄÁôÁµ£¬×îÖÕÔÚ¶¬ÈÕÂäÄ»µÄ£¬Ê«ÈËÓëº½¼£ÔÆµÄ¹ÊÊÂ¡£">
-  <meta name="author" content="ÏãËÌ¹İ">
-  <meta name="Copyright" content="´úÂëÊÚÈ¨Ğí¿ÉÒÀ¾İ MIT;Í¼ÏñÓëÓïÎÄÖø×÷ÊÚÈ¨Ğí¿ÉÒÀ¾İ ÊğÃû-·ÇÉÌÒµĞÔÊ¹ÓÃ 4.0 ¹ú¼Ê (CC BY-NC 4.0);2018 Gao Xiangsong/Xiangsong-Guan/ÏãËÌ¹İ">
+  <meta name="description" content="èˆªè¿¹äº‘ï¼Œè¿™æ˜¯ä¸€ä¸ªç»½æ”¾äºç››å¤ï¼Œå†ç»ç§‹æ—¥çš„ç•™æ‹ï¼Œæœ€ç»ˆåœ¨å†¬æ—¥è½å¹•çš„ï¼Œè¯—äººä¸èˆªè¿¹äº‘çš„æ•…äº‹ã€‚">
+  <meta name="author" content="é¦™é¢‚é¦†">
+  <meta name="Copyright" content="ä»£ç æˆæƒè®¸å¯ä¾æ® MIT;å›¾åƒä¸è¯­æ–‡è‘—ä½œæˆæƒè®¸å¯ä¾æ® ç½²å-éå•†ä¸šæ€§ä½¿ç”¨ 4.0 å›½é™… (CC BY-NC 4.0);2018 Gao Xiangsong/Xiangsong-Guan/é¦™é¢‚é¦†">
   <link rel="icon" href="/favicon.ico">
 
-  <title>º½¼£ÔÆ - [ch-code]</title>
+  <title>èˆªè¿¹äº‘ - [ch-code]</title>
 
   <link rel="stylesheet" type="text/css" href="/txt/css/cc.css">
 </head>
 
 <body>
   <h1>
-    <a href="/content.html">º½¼£ÔÆ</a>
+    <a href="/content.html">èˆªè¿¹äº‘</a>
   </h1>
 
   <ol class="content">
@@ -31,7 +31,7 @@ local ch_template =
       <p>[ch-title]</p>
     </li>
     <li>
-      <p>Î´Íê´ıĞø¡­¡­</p>
+      <p>æœªå®Œå¾…ç»­â€¦â€¦</p>
     </li>
   </ol>
 
@@ -42,8 +42,8 @@ local ch_template =
 
   <div class="footer">
     <i>
-      <p>Ò»¸öÕÀ·ÅÓÚÊ¢ÏÄ£¬Àú¾­ÇïÈÕµÄÁôÁµ£¬×îÖÕÔÚ¶¬ÈÕÂäÄ»µÄ</p>
-      <p>Ê«ÈËÓëº½¼£ÔÆµÄ¹ÊÊÂ¡£</p>
+      <p>ä¸€ä¸ªç»½æ”¾äºç››å¤ï¼Œå†ç»ç§‹æ—¥çš„ç•™æ‹ï¼Œæœ€ç»ˆåœ¨å†¬æ—¥è½å¹•çš„</p>
+      <p>è¯—äººä¸èˆªè¿¹äº‘çš„æ•…äº‹ã€‚</p>
     </i>
   </div>
 </body>
@@ -105,7 +105,7 @@ a_template = a_template:gsub("%[next%-ch%-title%]", ch_title)
 file = io.open("../html/story/" .. pre_ch_code .. ".html", "r")
 local pre_ch = file:read("a")
 file:close()
-pre_ch = pre_ch:gsub("Î´Íê´ıĞø¡­¡­", a_template)
+pre_ch = pre_ch:gsub("æœªå®Œå¾…ç»­â€¦â€¦", a_template)
 io.open("../html/story/" .. pre_ch_code .. ".html", "w"):write(pre_ch):close()
 
 os.exit(0)
