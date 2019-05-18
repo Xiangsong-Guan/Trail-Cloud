@@ -52,60 +52,61 @@ local ch_template =
 
 local a_template = '<a href="/story/[next-ch-code].html">[next-ch-title]</a>'
 
-local ch_code, pre_ch_code = string.format("%03d", tonumber(arg[1])), string.format("%03d", tonumber(arg[1]) - 1)
+local ch_code, pre_ch_code = string.format('%03d', tonumber(arg[1])), string.format('%03d', tonumber(arg[1]) - 1)
 
 -- read source file
-local file = io.open(ch_code .. ".txt", "r")
+local file = io.open('../ch/' .. ch_code .. '.txt', 'r')
 local ch_title = file:read()
-local ch = file:read("a")
+local ch = file:read('a')
 file:close()
 
 -- load index and update index
-local index = dofile("ch-title-index.lua")
+local index = dofile('ch-title-index.lua')
 local pre_ch_title = index[pre_ch_code]
 if pre_ch_title == nil then
-  pre_ch_title = "**********************************************************************"
+  pre_ch_title = ''
 end
-file = io.open("ch-title-index.lua", "r+")
-file:seek("end", -1)
-file:write(string.format('["%03d"] = "%s";\n}', ch_code, ch_title))
+file = io.open('ch-title-index.lua', 'r+')
+file:seek('end', -1)
+file:write(string.format('  ["%03d"] = "%s",\n}', ch_code, ch_title))
 file:close()
 
 -- write to html
-ch_template = ch_template:gsub("%[ch%-code%]", ch_code)
-ch_template = ch_template:gsub("%[pre%-ch%-code%]", pre_ch_code)
-ch_template = ch_template:gsub("%[ch%-title%]", ch_title)
-ch_template = ch_template:gsub("%[pre%-ch%-title%]", pre_ch_title)
-ch = ch:gsub("\n", "</p>\n    <p>")
-ch = ch_template:gsub("%[txt%]", "<p>" .. ch .. "</p>")
-io.open("../html/story/" .. ch_code .. ".html", "w"):write(ch):close()
+ch_template = ch_template:gsub('%[ch%-code%]', ch_code)
+ch_template = ch_template:gsub('%[pre%-ch%-code%]', pre_ch_code)
+ch_template = ch_template:gsub('%[ch%-title%]', ch_title)
+ch_template = ch_template:gsub('%[pre%-ch%-title%]', pre_ch_title)
+ch = ch:gsub('\n', '</p>\n    <p>')
+ch = ch:gsub('<p></p>', '<p>&nbsp;</p>')
+ch = ch_template:gsub('%[txt%]', '<p>' .. ch .. '</p>')
+io.open('../story/' .. ch_code .. '.html', 'w'):write(ch):close()
 
 -- update content.html
-file = io.open("../html/content.html", "r")
-local content = file:read("a")
+file = io.open('../content.html', 'r')
+local content = file:read('a')
 file:close()
 content =
   content:gsub(
-  "<!%-%- new index %-%->",
+  '<!%-%- new index %-%->',
   [[<li>
-      <p><a href="/story/]] ..
+        <p><a href="/story/]] ..
     ch_code .. '.html">' .. ch_title .. [[</a></p>
-    </li>
-    <!-- new index -->]]
+      </li>
+      <!-- new index -->]]
 )
-io.open("../html/content.html", "w"):write(content):close()
+io.open('../content.html', 'w'):write(content):close()
 
 -- update pre
-if pre_ch_code == "-01" then
+if pre_ch_code == '-01' then
   os.exit(0)
 end
 
-a_template = a_template:gsub("%[next%-ch%-code%]", ch_code)
-a_template = a_template:gsub("%[next%-ch%-title%]", ch_title)
-file = io.open("../html/story/" .. pre_ch_code .. ".html", "r")
-local pre_ch = file:read("a")
+a_template = a_template:gsub('%[next%-ch%-code%]', ch_code)
+a_template = a_template:gsub('%[next%-ch%-title%]', ch_title)
+file = io.open('../story/' .. pre_ch_code .. '.html', 'r')
+local pre_ch = file:read('a')
 file:close()
-pre_ch = pre_ch:gsub("未完待续……", a_template)
-io.open("../html/story/" .. pre_ch_code .. ".html", "w"):write(pre_ch):close()
+pre_ch = pre_ch:gsub('未完待续……', a_template)
+io.open('../story/' .. pre_ch_code .. '.html', 'w'):write(pre_ch):close()
 
 os.exit(0)
