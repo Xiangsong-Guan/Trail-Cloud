@@ -11,21 +11,21 @@ local ch_template =
   <meta name="description" content="航迹云，这是一个绽放于盛夏，历经秋日的留恋，最终在冬日落幕的，诗人与航迹云的故事。">
   <meta name="author" content="香颂馆">
   <meta name="Copyright" content="代码授权许可依据 MIT;图像与语文著作授权许可依据 署名-非商业性使用 4.0 国际 (CC BY-NC 4.0);2019 Gao Xiangsong/Xiangsong-Guan/香颂馆">
-  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" href="../favicon.ico">
 
   <title>航迹云 - [ch-code]</title>
 
-  <link rel="stylesheet" type="text/css" href="/txt/css/cc.css">
+  <link rel="stylesheet" type="text/css" href="../txt/css/cc.css">
 </head>
 
 <body>
   <h1>
-    <a href="/content.html">航迹云</a>
+    <a href="../content.html">航迹云</a>
   </h1>
 
   <ol class="content">
     <li>
-      <p><a href="/story/[pre-ch-code].html">[pre-ch-title]</a></p>
+      <p><a href="../story/[pre-ch-code].html">[pre-ch-title]</a></p>
     </li>
     <li>
       <p>[ch-title]</p>
@@ -50,7 +50,7 @@ local ch_template =
 
 </html>]]
 
-local a_template = '<a href="/story/[next-ch-code].html">[next-ch-title]</a>'
+local a_template = '<a href="../story/[next-ch-code].html">[next-ch-title]</a>'
 
 local ch_code, pre_ch_code = string.format('%03d', tonumber(arg[1])), string.format('%03d', tonumber(arg[1]) - 1)
 
@@ -89,7 +89,7 @@ content =
   content:gsub(
   '<!%-%- new index %-%->',
   [[<li>
-        <p><a href="/story/]] ..
+        <p><a href="story/]] ..
     ch_code .. '.html">' .. ch_title .. [[</a></p>
       </li>
       <!-- new index -->]]
