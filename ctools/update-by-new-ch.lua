@@ -1,7 +1,20 @@
 -- 2018.10.11
 
+--[[
+当不使用参数时：
+程序根据同目录下文件“ch-title-index.lua”，尝试录入后续章节。
+编号需按照次序，当程序试图录入一个章节但“ch”中尚不存在该章节时，程序将即刻终止。
+
+当使用单个数字参数时：
+程序直接录入，使用旧编号等同于覆盖原有HTML内容，此可为后续修改所用；
+新编号不予考虑，不允许跳过某一章节加入后续章节。
+--]]
+
+
+local a_template = '<a href="../story/[ch-code].html">[ch-title]</a>'
 local ch_template =
-  [[<!doctype html>
+[[
+<!doctype html>
 <html lang="zh">
 
 <head>
@@ -25,13 +38,13 @@ local ch_template =
 
   <ol class="content">
     <li>
-      <p><a href="../story/[pre-ch-code].html">[pre-ch-title]</a></p>
+      <p>[pre-item]</p>
     </li>
     <li>
       <p>[ch-title]</p>
     </li>
     <li>
-      <p>未完待续……</p>
+      <p>[post-item]</p>
     </li>
   </ol>
 
@@ -50,63 +63,130 @@ local ch_template =
 
 </html>]]
 
-local a_template = '<a href="../story/[next-ch-code].html">[next-ch-title]</a>'
+local is_edit_job
+local ch_code, pre_ch_code, post_ch_code
+local index
+local file
 
-local ch_code, pre_ch_code = string.format('%03d', tonumber(arg[1])), string.format('%03d', tonumber(arg[1]) - 1)
-
--- read source file
-local file = io.open('../ch/' .. ch_code .. '.txt', 'r')
-local ch_title = file:read()
-local ch = file:read('a')
-file:close()
-
--- load index and update index
-local index = dofile('ch-title-index.lua')
-local pre_ch_title = index[pre_ch_code]
-if pre_ch_title == nil then
-  pre_ch_title = ''
+-- input check
+ch_code = tonumber(arg[1])
+if (not ch_code) and arg[1] then
+  io.stderr:write("Invalid code!\n")
+  return -1
 end
-file = io.open('ch-title-index.lua', 'r+')
-file:seek('end', -1)
-file:write(string.format('  ["%03d"] = "%s",\n}', ch_code, ch_title))
-file:close()
+index = dofile("ch-title-index.lua")
+io.write("Handle input: ", ch_code or "nothing", ".\n")
 
--- write to html
-ch_template = ch_template:gsub('%[ch%-code%]', ch_code)
-ch_template = ch_template:gsub('%[pre%-ch%-code%]', pre_ch_code)
-ch_template = ch_template:gsub('%[ch%-title%]', ch_title)
-ch_template = ch_template:gsub('%[pre%-ch%-title%]', pre_ch_title)
-ch = ch:gsub('\n', '</p>\n    <p>')
-ch = ch:gsub('<p></p>', '<p>&nbsp;</p>')
-ch = ch_template:gsub('%[txt%]', '<p>' .. ch .. '</p>')
-io.open('../story/' .. ch_code .. '.html', 'w'):write(ch):close()
+-- edit job or addition job?
+is_edit_job = ch_code
+ch_code = ch_code or (#index + 1)
+-- if edit but not a exist ch then invalid
+if is_edit_job and (not index[ch_code]) then
+  io.stderr:write("Code for edit not exist!\n")
+  return -1
+end
+pre_ch_code = ch_code - 1
+post_ch_code = ch_code + 1
+if is_edit_job then
+  io.write("Initialized for edit job.\n")
+else
+  io.write("Initialized for addition job.\n")
+end
 
--- update content.html
-file = io.open('../content.html', 'r')
-local content = file:read('a')
-file:close()
-content =
-  content:gsub(
-  '<!%-%- new index %-%->',
-  [[<li>
-        <p><a href="story/]] ..
-    ch_code .. '.html">' .. ch_title .. [[</a></p>
+-- just do once if is edit job
+while not is_edit_job do
+  local ch_title
+  local ch -- all the content for ch_code.txt
+  local html, ch_in_p
+  local pre_in_a, post_in_a = "", "未完待续……"
+  local content
+  local a
+
+  io.write("Excution for code ", ch_code, "...\n")
+
+  -- find out pre ch info, if this ch is 1st then leave blank
+  if index[pre_ch_code] then
+    pre_in_a = a_template:gsub("%[ch%-code%]", ("%03d"):format(pre_ch_code)):gsub("%[ch%-title%]", index[pre_ch_code])
+    io.write("Found previous chapter: ", pre_ch_code, ".\n")
+  else
+    io.write("No previous chapter.\n")
+  end
+  -- find out post ch info, if this ch is last then leave "to be continue..."
+  if index[post_ch_code] then
+    post_in_a = a_template:gsub("%[ch%-code%]", ("%03d"):format(post_ch_code)):gsub("%[ch%-title%]", index[pre_ch_code])
+    io.write("Found post chapter: ", post_ch_code, ".\n")
+  else
+    io.write("No post chapter.\n")
+  end
+
+  -- read source file
+  file = io.open("../ch/"..("%03d"):format(ch_code)..".txt", "r")
+  if not file then
+    io.write("Ch.", ch_code, " not found, cancel.\n")
+    break;
+  end
+  ch_title = file:read()
+  ch = file:read("a")
+  file:close()
+  io.write("Compeleted story reading.\n");
+
+  -- write html
+  ch_in_p = ch:gsub("\n", "</p>\n    <p>"):gsub("<p></p>", "<p>&nbsp;</p>")
+  html = ch_template:gsub("%[ch%-code%]", ("%03d"):format(ch_code)):gsub("%[ch%-title%]", ch_title)
+  html = html:gsub("%[pre%-item%]", pre_in_a)
+  html = html:gsub("%[post%-item%]", post_in_a)
+  html = html:gsub("%[txt%]", "<p>" .. ch_in_p .. "</p>")
+  io.open("../story/"..("%03d"):format(ch_code)..".html", "w"):write(html):close()
+  io.write("../story/"..("%03d"):format(ch_code)..".html", " wrote.\n")
+
+  -- update index
+  index[ch_code] = ch_title
+
+  -- make a
+  a = a_template:gsub("%[ch%-code%]", ("%03d"):format(ch_code)):gsub("%[ch%-title%]", ch_title)
+
+  -- update pre html
+  if pre_ch_code > 0 then
+    local pre_html
+    io.write("Updating html content in html.", pre_ch_code, "...\n")
+    file = io.open('../story/'..("%03d"):format(pre_ch_code)..'.html', 'r')
+    pre_html = file:read('a')
+    file:close()
+    pre_html = pre_html:gsub('未完待续……', a)
+    io.open('../story/'..("%03d"):format(pre_ch_code)..'.html', 'w'):write(pre_html):close()
+  end
+
+  -- append new one to content
+  file = io.open("../content.html", "r")
+  content = file:read("a")
+  file:close()
+  content =
+    content:gsub(
+      '<!%-%- new index %-%->',
+[[
+<li>
+        <p>]]..a:gsub("%.%.%/", "")..[[</p>
       </li>
       <!-- new index -->]]
-)
-io.open('../content.html', 'w'):write(content):close()
+  )
+  io.open('../content.html', 'w'):write(content):close()
+  io.write("Content updated.\n")
 
--- update pre
-if pre_ch_code == '-01' then
-  os.exit(0)
+
+  -- next for addition jobs
+  ch_code = ch_code + 1
+  pre_ch_code = ch_code - 1
+  post_ch_code = ch_code + 1
 end
+io.write("All Excution done.\n")
 
-a_template = a_template:gsub('%[next%-ch%-code%]', ch_code)
-a_template = a_template:gsub('%[next%-ch%-title%]', ch_title)
-file = io.open('../story/' .. pre_ch_code .. '.html', 'r')
-local pre_ch = file:read('a')
+-- rewrite index file
+file = io.open("ch-title-index.lua", "w")
+file:write("return\n{\n")
+for i, v in ipairs(index) do
+  file:write("\t[", ("%03d"):format(i), "] = \"", v, "\",\n")
+end
+file:write("}\n")
 file:close()
-pre_ch = pre_ch:gsub('未完待续……', a_template)
-io.open('../story/' .. pre_ch_code .. '.html', 'w'):write(pre_ch):close()
 
-os.exit(0)
+return 0;
