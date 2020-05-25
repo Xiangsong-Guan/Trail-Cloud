@@ -10,7 +10,7 @@ h1, h2, h3 {
 
 p {
   text-indent: 2em;
-  line-height: 150%;
+  line-height: 175%;
 
   font-size: 18px;
   font-weight: 500;
@@ -22,6 +22,7 @@ p {
 li p {
   text-indent: -2em;
   padding-left: 2em;
+  line-height: 150%;
 }
 
 li {
@@ -49,7 +50,7 @@ a:hover { color: skyblue; text-decoration: none; }
 }
 
 .text {
-  margin: 0 3vw;
+  margin: 3vw;
 }
 
 .index {
