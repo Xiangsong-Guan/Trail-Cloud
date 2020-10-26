@@ -158,7 +158,7 @@ repeat
     if index[post_ch_code] then
         post_in_a = a_template:gsub("%[ch%-code%]",
                                     ("%03d"):format(post_ch_code)):gsub(
-                        "%[ch%-title%]", index[pre_ch_code])
+                        "%[ch%-title%]", index[post_ch_code])
         io.write("Found post chapter: ", post_ch_code, ".\n")
     else
         io.write("No post chapter.\n")
